@@ -7,10 +7,10 @@ import platform
 import numpy as np
 import random
 import librosa
+from python.audio import split
 
 if platform.system() == 'Linux':
     import torchaudio
-    import from_librosa as from_librosa
 
 
 def get_librosa_melspectrogram(filepath, n_mels=80, del_silence=False, input_reverse=True, normalize=False,
@@ -212,7 +212,7 @@ def get_torchaudio_melspectrogram(filepath, n_mels=80, del_silence=False, input_
         try:
             pcm = np.memmap(filepath, dtype='h', mode='r')
         except RuntimeError:
-            logger.info('RuntimeError in {0}'.format(filepath))
+            print('RuntimeError in {0}'.format(filepath))
             return None
 
         signal = np.array([float(x) for x in pcm])
@@ -227,7 +227,7 @@ def get_torchaudio_melspectrogram(filepath, n_mels=80, del_silence=False, input_
     STRIDE = int(sr * 0.001 * stride)
 
     if del_silence:
-        non_silence_ids = from_librosa.split(y=signal, top_db=30)
+        non_silence_ids = split(y=signal, top_db=30)
         signal = np.concatenate([signal[start:end] for start, end in non_silence_ids])
 
     transforms = torchaudio.transforms.MelSpectrogram(sample_rate=sr, n_fft=N_FFT, n_mels=n_mels, hop_length=STRIDE)
@@ -279,7 +279,7 @@ def get_torch_spectrogram(filepath, sr=16000, window_size=20, stride=10):
         try:
             pcm = np.memmap(filepath, dtype='h', mode='r')
         except RuntimeError:
-            logger.info('RuntimeError in {0}'.format(filepath))
+            print('RuntimeError in {0}'.format(filepath))
             return None
 
         signal = np.array([float(x) for x in pcm])
@@ -341,7 +341,7 @@ def get_librosa_spectrogram(filepath, input_reverse=True, normalize=False, del_s
         try:
             pcm = np.memmap(filepath, dtype='h', mode='r')
         except RuntimeError:
-            logger.info('RuntimeError in {0}'.format(filepath))
+            print('RuntimeError in {0}'.format(filepath))
             return None
 
         signal = np.array([float(x) for x in pcm])

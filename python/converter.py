@@ -73,4 +73,3 @@ class Wav2Pcm(object):
 
         wav_file.close()
         return sample_rate, bit_rate, data
-
